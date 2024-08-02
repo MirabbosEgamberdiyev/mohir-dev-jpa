@@ -149,5 +149,73 @@ public class StudentController {
         }
     }
 
+    @Operation(
+            summary = "Get student by email",
+            description = "This endpoint retrieves a student by their email address.",
+            tags = {"Student"}
+    )
+    @ApiResponse(responseCode = "200",
+            description = "Student successfully retrieved",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Student.class)
+            )
+    )
+    @ApiResponse(responseCode = "404",
+            description = "Student not found",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ResponseMessage.class)
+            )
+    )
+    @ApiResponse(responseCode = "500",
+            description = "Internal server error",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ResponseMessage.class)
+            )
+    )
+    @GetMapping("/by-email")
+    public ResponseEntity<?> getStudentByEmail(@RequestParam(value = "email") String email) {
+        try {
+            return studentService.getStudentByEmail(email);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseMessage("Error retrieving student by email: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 
+    @Operation(
+            summary = "Get student by phone number",
+            description = "This endpoint retrieves a student by their phone number.",
+            tags = {"Student"}
+    )
+    @ApiResponse(responseCode = "200",
+            description = "Student successfully retrieved",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Student.class)
+            )
+    )
+    @ApiResponse(responseCode = "404",
+            description = "Student not found",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ResponseMessage.class)
+            )
+    )
+    @ApiResponse(responseCode = "500",
+            description = "Internal server error",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ResponseMessage.class)
+            )
+    )
+    @GetMapping("/by-phone")
+    public ResponseEntity<?> getStudentByPhoneNumber(@RequestParam(value = "phoneNumber") String phoneNumber) {
+        try {
+            return studentService.getStudentByPhoneNumber(phoneNumber);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseMessage("Error retrieving student by phone number: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.NumberFormat;
 
 import java.io.Serializable;
 @Data
@@ -30,6 +31,11 @@ public class Student implements Serializable {
     @Schema(required = true, description = "Talabaning familiyasi")
     @Column(nullable = false)
     private String last_name;
+
+    @NotNull
+    @Schema(required = true, description = "Talabaning telfon raqami")
+    @Column(nullable = false, unique = true)
+    private String phoneNumber;
 
     @NotNull
     @Email(message = "Iltimos email kiriting")

@@ -25,6 +25,11 @@ public class StudentDto {
     private String last_name;
 
     @NotNull
+    @Schema(required = true, description = "Talabaning telfon raqami")
+    @Column(nullable = false, unique = true)
+    private String phoneNumber;
+
+    @NotNull
     @Email(message = "Iltimos email kiriting")
     @Schema(required = true, description = "Talabaning emaili")
     @Column(nullable = false, unique = true)

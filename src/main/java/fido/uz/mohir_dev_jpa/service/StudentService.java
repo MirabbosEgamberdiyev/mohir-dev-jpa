@@ -101,4 +101,32 @@ public class StudentService {
         List<Student> students = studentRepository.findAll();
         return new ResponseEntity<>(students, HttpStatus.OK);
     }
+
+    // Find a student by email
+    public ResponseEntity<?> getStudentByEmail(String email) {
+        try {
+            Optional<Student> studentOpt = studentRepository.findByEmail(email);
+            if (studentOpt.isPresent()) {
+                return new ResponseEntity<>(studentOpt.get(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new ResponseMessage("Student with email " + email + " not found.", 404), HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseMessage("Error retrieving student by email: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    // Find a student by phone number
+    public ResponseEntity<?> getStudentByPhoneNumber(String phoneNumber) {
+        try {
+            Optional<Student> studentOpt = studentRepository.findByPhoneNumber(phoneNumber);
+            if (studentOpt.isPresent()) {
+                return new ResponseEntity<>(studentOpt.get(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(new ResponseMessage("Student with phone number " + phoneNumber + " not found.", 404), HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseMessage("Error retrieving student by phone number: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
