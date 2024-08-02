@@ -11,6 +11,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Entity
@@ -37,9 +38,9 @@ public class Teacher implements Serializable {
 
     @NotNull
     @NotBlank
-    @Size(min = 3, max = 100, message = "Last name must be between 3 and 100 characters")
+    @Size(min = 3, max = 100, message = "Subject name must be between 3 and 100 characters")
     @Schema(required = true, description = "Teacher's subject name")
-    private String subject_name;
+    private String subject_name;  // This should not be null
 
     @NotNull
     @NotBlank
@@ -63,4 +64,7 @@ public class Teacher implements Serializable {
     @Size(min = 3, max = 500, message = "Address must be between 3 and 500 characters")
     @Schema(required = true, description = "Teacher's address")
     private String address;
+
+    @OneToMany(mappedBy = "teacher")
+    private List<Student> students;
 }

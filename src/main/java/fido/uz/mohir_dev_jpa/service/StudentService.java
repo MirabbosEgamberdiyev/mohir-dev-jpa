@@ -4,6 +4,7 @@ import fido.uz.mohir_dev_jpa.dto.StudentDto;
 import fido.uz.mohir_dev_jpa.entity.Student;
 import fido.uz.mohir_dev_jpa.exception.ResponseMessage;
 import fido.uz.mohir_dev_jpa.repository.StudentRepository;
+import fido.uz.mohir_dev_jpa.repository.TeacherRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
@@ -18,9 +19,11 @@ import java.util.Optional;
 public class StudentService {
 
     private final StudentRepository studentRepository;
+    private final TeacherRepository teacherRepository;
 
-    public StudentService(StudentRepository studentRepository) {
+    public StudentService(StudentRepository studentRepository, TeacherRepository teacherRepository) {
         this.studentRepository = studentRepository;
+        this.teacherRepository = teacherRepository;
     }
     public ResponseEntity<ResponseMessage> saveStudent(StudentDto studentDto) {
         try {
@@ -37,6 +40,7 @@ public class StudentService {
             student.setPhoneNumber(studentDto.getPhoneNumber());
             student.setAddress(studentDto.getAddress());
             student.setAge(studentDto.getAge());
+            student.setTeacher(teacherRepository.getOne(studentDto.getTeacherId()));
 
             studentRepository.save(student);
             return new ResponseEntity<>(new ResponseMessage("Student was successfully created.", 201), HttpStatus.CREATED);

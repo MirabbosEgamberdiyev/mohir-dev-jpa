@@ -57,4 +57,8 @@ public class Student implements Serializable {
     @Size(min = 3, max = 500, message = "Address must be between 3 and 500 characters")
     @Schema(required = true, description = "Student's address")
     private String address;
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id", nullable = false)
+    private Teacher teacher;
 }

@@ -28,9 +28,9 @@ public class TeacherDto {
 
     @NotNull
     @NotBlank
-    @Size(min = 3, max = 100, message = "Last name must be between 3 and 100 characters")
+    @Size(min = 3, max = 100, message = "Subject name must be between 3 and 100 characters")
     @Schema(required = true, description = "Teacher's subject name")
-    private String subject_name;
+    private String subject_name;  // This should not be null
 
     @NotNull
     @NotBlank

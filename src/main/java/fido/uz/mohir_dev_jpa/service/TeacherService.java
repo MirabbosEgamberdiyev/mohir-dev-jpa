@@ -20,7 +20,6 @@ public class TeacherService {
     public TeacherService(TeacherRepository teacherRepository) {
         this.teacherRepository = teacherRepository;
     }
-
     public ResponseEntity<ResponseMessage> saveTeacher(TeacherDto teacherDto) {
         try {
             Optional<Teacher> existingTeacherOpt = teacherRepository.findByEmail(teacherDto.getEmail());
@@ -29,13 +28,21 @@ public class TeacherService {
                 return new ResponseEntity<>(new ResponseMessage("Teacher with email " + teacherDto.getEmail() + " already exists.", 400), HttpStatus.BAD_REQUEST);
             }
 
-            teacherRepository.saveTeacher(teacherDto.getFirst_name(), teacherDto.getLast_name(), teacherDto.getEmail(), teacherDto.getPhoneNumber(), teacherDto.getAddress(), teacherDto.getAge());
+            teacherRepository.saveTeacher(
+                    teacherDto.getFirst_name(),
+                    teacherDto.getLast_name(),
+                    teacherDto.getEmail(),
+                    teacherDto.getPhoneNumber(),
+                    teacherDto.getAddress(),
+                    teacherDto.getAge(),
+                    teacherDto.getSubject_name()
+            );
+
             return new ResponseEntity<>(new ResponseMessage("Teacher was successfully created.", 201), HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(new ResponseMessage("Error creating teacher: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     public ResponseEntity<?> getByIdTeacher(Long id) {
         try {
             Optional<Teacher> teacherOpt = teacherRepository.findById(id);
@@ -54,12 +61,22 @@ public class TeacherService {
         try {
             Optional<Teacher> existingTeacherOpt = teacherRepository.findById(teacher.getId());
 
-            if (existingTeacherOpt.isPresent()) {
-                teacherRepository.updateTeacher(teacher.getId(), teacher.getFirst_name(), teacher.getLast_name(), teacher.getEmail(), teacher.getPhoneNumber(), teacher.getAddress(), teacher.getAge());
-                return new ResponseEntity<>(new ResponseMessage("Teacher with ID " + teacher.getId() + " was successfully updated.", 200), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ResponseMessage("Teacher with ID " + teacher.getId() + " not found.", 404), HttpStatus.NOT_FOUND);
+            if (!existingTeacherOpt.isPresent()) {
+                return new ResponseEntity<>(new ResponseMessage("Teacher with ID " + teacher.getId() + " does not exist.", 404), HttpStatus.NOT_FOUND);
             }
+
+            teacherRepository.updateTeacher(
+                    teacher.getId(),
+                    teacher.getFirst_name(),
+                    teacher.getLast_name(),
+                    teacher.getEmail(),
+                    teacher.getPhoneNumber(),
+                    teacher.getAddress(),
+                    teacher.getAge(),
+                    teacher.getSubject_name()
+            );
+
+            return new ResponseEntity<>(new ResponseMessage("Teacher was successfully updated.", 200), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(new ResponseMessage("Error updating teacher: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -67,9 +84,7 @@ public class TeacherService {
 
     public ResponseEntity<ResponseMessage> deleteById(Long id) {
         try {
-            Optional<Teacher> teacherOpt = teacherRepository.findById(id);
-
-            if (teacherOpt.isPresent()) {
+            if (teacherRepository.existsById(id)) { // Tekshirib ko'rish
                 teacherRepository.deleteById(id);
                 return new ResponseEntity<>(new ResponseMessage("Teacher with ID " + id + " was successfully deleted.", 200), HttpStatus.OK);
             } else {
@@ -79,7 +94,6 @@ public class TeacherService {
             return new ResponseEntity<>(new ResponseMessage("Error deleting teacher: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
     public ResponseEntity<?> getAllTeachers() {
         try {
             List<Teacher> teachers = teacherRepository.findAllTeachers();

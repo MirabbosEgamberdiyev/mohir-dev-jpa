@@ -49,4 +49,8 @@ public class StudentDto {
     @Size(min = 3, max = 500, message = "Address must be between 3 and 500 characters")
     @Schema(required = true, description = "Student's address")
     private String address;
+
+
+    @Schema( description = "ID of the teacher associated with the student")
+    private Long teacherId;
 }
