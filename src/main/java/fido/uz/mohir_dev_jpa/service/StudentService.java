@@ -34,6 +34,7 @@ public class StudentService {
             student.setFirst_name(studentDto.getFirst_name());
             student.setLast_name(studentDto.getLast_name());
             student.setEmail(studentDto.getEmail());
+            student.setPhoneNumber(studentDto.getPhoneNumber());
             student.setAddress(studentDto.getAddress());
             student.setAge(studentDto.getAge());
 
@@ -70,6 +71,7 @@ public class StudentService {
                 existingStudent.setLast_name(student.getLast_name());
                 existingStudent.setEmail(student.getEmail());
                 existingStudent.setAddress(student.getAddress());
+                existingStudent.setPhoneNumber(student.getPhoneNumber());
                 existingStudent.setAge(student.getAge());
 
                 studentRepository.save(existingStudent);

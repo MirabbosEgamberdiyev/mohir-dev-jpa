@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class StudentController {
             )
     )
     @PostMapping("/save-student")
-    public ResponseEntity<ResponseMessage> createStudent(@RequestBody StudentDto studentDto) {
+    public ResponseEntity<ResponseMessage> createStudent(@Valid @RequestBody StudentDto studentDto) {
         try {
             return studentService.saveStudent(studentDto);
         } catch (Exception e) {
@@ -113,7 +114,7 @@ public class StudentController {
             )
     )
     @PutMapping("/update-student")
-    public ResponseEntity<ResponseMessage> updateStudent(@RequestBody Student student) {
+    public ResponseEntity<ResponseMessage> updateStudent(@Valid @RequestBody Student student) {
         try {
             return studentService.updateStudent(student);
         } catch (Exception e) {
@@ -176,7 +177,7 @@ public class StudentController {
             )
     )
     @GetMapping("/by-email")
-    public ResponseEntity<?> getStudentByEmail(@RequestParam(value = "email") String email) {
+    public ResponseEntity<?> getStudentByEmail(@Valid @RequestParam(value = "email") String email) {
         try {
             return studentService.getStudentByEmail(email);
         } catch (Exception e) {
@@ -212,7 +213,7 @@ public class StudentController {
             )
     )
     @GetMapping("/by-phone")
-    public ResponseEntity<?> getStudentByPhoneNumber(@RequestParam(value = "phoneNumber") String phoneNumber) {
+    public ResponseEntity<?> getStudentByPhoneNumber(@Valid @RequestParam(value = "phoneNumber") String phoneNumber) {
         try {
             return studentService.getStudentByPhoneNumber(phoneNumber);
         } catch (Exception e) {
