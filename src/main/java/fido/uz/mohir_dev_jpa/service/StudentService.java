@@ -3,6 +3,7 @@ package fido.uz.mohir_dev_jpa.service;
 import fido.uz.mohir_dev_jpa.dto.ResponseStudentDto;
 import fido.uz.mohir_dev_jpa.dto.StudentDto;
 import fido.uz.mohir_dev_jpa.dto.TeacherDto;
+import fido.uz.mohir_dev_jpa.dto.UpdateStudent;
 import fido.uz.mohir_dev_jpa.entity.Student;
 import fido.uz.mohir_dev_jpa.entity.Teacher;
 import fido.uz.mohir_dev_jpa.exception.ResponseMessage;
@@ -52,21 +53,8 @@ public class StudentService {
         }
     }
 
-    public ResponseEntity<?> getByIdStudent(Long id) {
-        try {
-            Optional<Student> studentOpt = studentRepository.findById(id);
 
-            if (studentOpt.isPresent()) {
-                return new ResponseEntity<>(studentOpt.get(), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ResponseMessage("Student with ID " + id + " not found.", 404), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(new ResponseMessage("Error retrieving student: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    public ResponseEntity<ResponseMessage> updateStudent(Student student) {
+    public ResponseEntity<ResponseMessage> updateStudent(UpdateStudent student) {
         try {
             Optional<Student> existingStudentOpt = studentRepository.findById(student.getId());
 
@@ -80,6 +68,7 @@ public class StudentService {
                 existingStudent.setAddress(student.getAddress());
                 existingStudent.setPhoneNumber(student.getPhoneNumber());
                 existingStudent.setAge(student.getAge());
+                existingStudent.setTeacher(teacherRepository.getOne(student.getTeacherId()));
 
                 studentRepository.save(existingStudent);
 
@@ -106,38 +95,12 @@ public class StudentService {
             return new ResponseEntity<>(new ResponseMessage("Error deleting student: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    public ResponseEntity<List<Student>> getAllStudent() {
-        List<Student> students = studentRepository.findAll();
-        return new ResponseEntity<>(students, HttpStatus.OK);
+
+    public Optional<ResponseStudentDto> getStudentById(Long id) {
+        Optional<Student> student = studentRepository.findById(id);
+        return student.map(this::convertToDto);
     }
 
-    // Find a student by email
-    public ResponseEntity<?> getStudentByEmail(String email) {
-        try {
-            Optional<Student> studentOpt = studentRepository.findByEmail(email);
-            if (studentOpt.isPresent()) {
-                return new ResponseEntity<>(studentOpt.get(), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ResponseMessage("Student with email " + email + " not found.", 404), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(new ResponseMessage("Error retrieving student by email: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    // Find a student by phone number
-    public ResponseEntity<?> getStudentByPhoneNumber(String phoneNumber) {
-        try {
-            Optional<Student> studentOpt = studentRepository.findByPhoneNumber(phoneNumber);
-            if (studentOpt.isPresent()) {
-                return new ResponseEntity<>(studentOpt.get(), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(new ResponseMessage("Student with phone number " + phoneNumber + " not found.", 404), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(new ResponseMessage("Error retrieving student by phone number: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
 
     // Convert Student entity to ResponseStudentDto
     private ResponseStudentDto convertToDto(Student student) {
@@ -154,10 +117,45 @@ public class StudentService {
         return dto;
     }
 
-    public Optional<ResponseStudentDto> getStudentById(Long id) {
-        Optional<Student> student = studentRepository.findById(id);
-        return student.map(this::convertToDto);
+    public ResponseEntity<ResponseStudentDto> getStudentByEmail(String email) {
+        try {
+            Optional<Student> studentOpt = studentRepository.findByEmail(email);
+            if (studentOpt.isPresent()) {
+                return new ResponseEntity<>(convertToDto(studentOpt.get()), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
+    public ResponseEntity<ResponseStudentDto> getStudentByPhoneNumber(String phoneNumber) {
+        try {
+            Optional<Student> studentOpt = studentRepository.findByPhoneNumber(phoneNumber);
+            if (studentOpt.isPresent()) {
+                return new ResponseEntity<>(convertToDto(studentOpt.get()), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public ResponseEntity<List<ResponseStudentDto>> getAllStudent() {
+        try {
+            List<Student> students = studentRepository.findAll();
+            List<ResponseStudentDto> studentDtos = students.stream()
+                    .map(this::convertToDto)
+                    .toList();
+            return new ResponseEntity<>(studentDtos, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 
     // Method to convert Teacher entity to TeacherDto
     private TeacherDto convertTeacherToDto(Teacher teacher) {

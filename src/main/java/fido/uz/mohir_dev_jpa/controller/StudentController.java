@@ -2,6 +2,7 @@ package fido.uz.mohir_dev_jpa.controller;
 
 import fido.uz.mohir_dev_jpa.dto.ResponseStudentDto;
 import fido.uz.mohir_dev_jpa.dto.StudentDto;
+import fido.uz.mohir_dev_jpa.dto.UpdateStudent;
 import fido.uz.mohir_dev_jpa.entity.Student;
 import fido.uz.mohir_dev_jpa.exception.ResponseMessage;
 import fido.uz.mohir_dev_jpa.service.StudentService;
@@ -121,7 +122,7 @@ public class StudentController {
             )
     )
     @PutMapping("/update-student")
-    public ResponseEntity<ResponseMessage> updateStudent(@Valid @RequestBody Student student) {
+    public ResponseEntity<ResponseMessage> updateStudent(@Valid @RequestBody UpdateStudent student) {
         try {
             return studentService.updateStudent(student);
         } catch (Exception e) {
