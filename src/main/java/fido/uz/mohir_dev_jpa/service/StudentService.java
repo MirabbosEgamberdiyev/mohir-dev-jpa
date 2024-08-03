@@ -1,7 +1,10 @@
 package fido.uz.mohir_dev_jpa.service;
 
+import fido.uz.mohir_dev_jpa.dto.ResponseStudentDto;
 import fido.uz.mohir_dev_jpa.dto.StudentDto;
+import fido.uz.mohir_dev_jpa.dto.TeacherDto;
 import fido.uz.mohir_dev_jpa.entity.Student;
+import fido.uz.mohir_dev_jpa.entity.Teacher;
 import fido.uz.mohir_dev_jpa.exception.ResponseMessage;
 import fido.uz.mohir_dev_jpa.repository.StudentRepository;
 import fido.uz.mohir_dev_jpa.repository.TeacherRepository;
@@ -134,5 +137,41 @@ public class StudentService {
         } catch (Exception e) {
             return new ResponseEntity<>(new ResponseMessage("Error retrieving student by phone number: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    // Convert Student entity to ResponseStudentDto
+    private ResponseStudentDto convertToDto(Student student) {
+        ResponseStudentDto dto = new ResponseStudentDto();
+        dto.setId(student.getId());
+        dto.setFirst_name(student.getFirst_name());
+        dto.setLast_name(student.getLast_name());
+        dto.setPhoneNumber(student.getPhoneNumber());
+        dto.setEmail(student.getEmail());
+        dto.setAge(student.getAge());
+        dto.setAddress(student.getAddress());
+        // Assuming you have a method to convert Teacher entity to TeacherDto
+        dto.setTeacherDto(convertTeacherToDto(student.getTeacher()));
+        return dto;
+    }
+
+    public Optional<ResponseStudentDto> getStudentById(Long id) {
+        Optional<Student> student = studentRepository.findById(id);
+        return student.map(this::convertToDto);
+    }
+
+    // Method to convert Teacher entity to TeacherDto
+    private TeacherDto convertTeacherToDto(Teacher teacher) {
+        if (teacher == null) {
+            return null;
+        }
+        TeacherDto dto = new TeacherDto();
+        dto.setFirst_name(teacher.getFirst_name());
+        dto.setLast_name(teacher.getLast_name());
+        dto.setSubject_name(teacher.getSubject_name());
+        dto.setPhoneNumber(teacher.getPhoneNumber());
+        dto.setEmail(teacher.getEmail());
+        dto.setAge(teacher.getAge());
+        dto.setAddress(teacher.getAddress());
+        return dto;
     }
 }

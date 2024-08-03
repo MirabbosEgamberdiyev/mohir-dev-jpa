@@ -1,5 +1,6 @@
 package fido.uz.mohir_dev_jpa.controller;
 
+import fido.uz.mohir_dev_jpa.dto.ResponseStudentDto;
 import fido.uz.mohir_dev_jpa.dto.StudentDto;
 import fido.uz.mohir_dev_jpa.entity.Student;
 import fido.uz.mohir_dev_jpa.exception.ResponseMessage;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api")
@@ -50,33 +52,33 @@ public class StudentController {
         }
     }
 
-    @Operation(
-            summary = "Get a student by ID",
-            description = "This endpoint retrieves a student by their ID.",
-            tags = {"Student"}
-    )
-    @ApiResponse(responseCode = "200",
-            description = "Student successfully retrieved",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = Student.class)
-            )
-    )
-    @ApiResponse(responseCode = "404",
-            description = "Student not found",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = ResponseMessage.class)
-            )
-    )
-    @GetMapping("/get-by-id/{id}")
-    public ResponseEntity<?> getStudentById(@PathVariable Long id) {
-        try {
-            return studentService.getByIdStudent(id);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new ResponseMessage("Error retrieving student: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
+//    @Operation(
+//            summary = "Get a student by ID",
+//            description = "This endpoint retrieves a student by their ID.",
+//            tags = {"Student"}
+//    )
+//    @ApiResponse(responseCode = "200",
+//            description = "Student successfully retrieved",
+//            content = @Content(
+//                    mediaType = "application/json",
+//                    schema = @Schema(implementation = Student.class)
+//            )
+//    )
+//    @ApiResponse(responseCode = "404",
+//            description = "Student not found",
+//            content = @Content(
+//                    mediaType = "application/json",
+//                    schema = @Schema(implementation = ResponseMessage.class)
+//            )
+//    )
+//    @GetMapping("/get-by-id/{id}")
+//    public ResponseEntity<?> getStudentById(@PathVariable Long id) {
+//        try {
+//            return studentService.getByIdStudent(id);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>(new ResponseMessage("Error retrieving student: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
 
     @Operation(
             summary = "Get all students",
@@ -223,6 +225,36 @@ public class StudentController {
             return studentService.getStudentByPhoneNumber(phoneNumber);
         } catch (Exception e) {
             return new ResponseEntity<>(new ResponseMessage("Error retrieving student by phone number: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Operation(
+            summary = "Get a student by ID",
+            description = "This endpoint retrieves a student by their ID.",
+            tags = {"Student"}
+    )
+    @ApiResponse(responseCode = "200",
+            description = "Student successfully retrieved",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Student.class)
+            )
+    )
+    @ApiResponse(responseCode = "404",
+            description = "Student not found",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ResponseMessage.class)
+            )
+    )
+    @GetMapping("/get-by-id/{id}")
+    public ResponseEntity<?> getStudentById(@PathVariable Long id) {
+        try {
+            Optional<ResponseStudentDto> studentById = studentService.getStudentById(id);
+
+            return ResponseEntity.ok(studentById.get());
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseMessage("Error retrieving student: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

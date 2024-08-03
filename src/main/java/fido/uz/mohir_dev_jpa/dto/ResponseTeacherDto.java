@@ -9,10 +9,15 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TeacherDto {
+public class ResponseTeacherDto {
+
+    @Schema(description = "Teacher's ID")
+    private Long id;
 
     @NotNull
     @NotBlank
@@ -30,7 +35,7 @@ public class TeacherDto {
     @NotBlank
     @Size(min = 3, max = 100, message = "Subject name must be between 3 and 100 characters")
     @Schema(required = true, description = "Teacher's subject name")
-    private String subject_name;
+    private String subject_name;  // This should not be null
 
     @NotNull
     @NotBlank
@@ -54,4 +59,7 @@ public class TeacherDto {
     @Size(min = 3, max = 500, message = "Address must be between 3 and 500 characters")
     @Schema(required = true, description = "Teacher's address")
     private String address;
+
+    private List<ResponseStudent> students;
+
 }

@@ -1,6 +1,8 @@
 package fido.uz.mohir_dev_jpa.controller;
 
+import fido.uz.mohir_dev_jpa.dto.ResponseTeacherDto;
 import fido.uz.mohir_dev_jpa.dto.TeacherDto;
+import fido.uz.mohir_dev_jpa.dto.UpdateTeacherDto;
 import fido.uz.mohir_dev_jpa.entity.Teacher;
 import fido.uz.mohir_dev_jpa.exception.ResponseMessage;
 import fido.uz.mohir_dev_jpa.service.TeacherService;
@@ -12,6 +14,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/teachers")
@@ -43,35 +48,6 @@ public class TeacherController {
             return new ResponseEntity<>(new ResponseMessage("Error creating teacher: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @Operation(
-            summary = "Get a teacher by ID",
-            description = "This endpoint retrieves a teacher by their ID.",
-            tags = {"Teacher"}
-    )
-    @ApiResponse(responseCode = "200",
-            description = "Teacher successfully retrieved",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = Teacher.class)
-            )
-    )
-    @ApiResponse(responseCode = "404",
-            description = "Teacher not found",
-            content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = ResponseMessage.class)
-            )
-    )
-    @GetMapping("/get-by-id/{id}")
-    public ResponseEntity<?> getTeacherById(@PathVariable Long id) {
-        try {
-            return teacherService.getByIdTeacher(id);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new ResponseMessage("Error retrieving teacher by ID: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
     @Operation(
             summary = "Get all teachers",
             description = "This endpoint retrieves all teachers.",
@@ -87,11 +63,14 @@ public class TeacherController {
     @GetMapping("/get-all")
     public ResponseEntity<?> getAllTeachers() {
         try {
-            return teacherService.getAllTeachers();
+            ResponseEntity<List<ResponseTeacherDto>> allTeachers = teacherService.getAllTeachers();
+            return ResponseEntity.ok(allTeachers.getBody());
         } catch (Exception e) {
             return new ResponseEntity<>(new ResponseMessage("Error retrieving teachers: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 
     @Operation(
             summary = "Update an existing teacher",
@@ -113,9 +92,10 @@ public class TeacherController {
             )
     )
     @PutMapping("/update")
-    public ResponseEntity<ResponseMessage> updateTeacher(@Valid @RequestBody Teacher teacher) {
+    public ResponseEntity<?> updateTeacher(@Valid @RequestBody UpdateTeacherDto teacher) {
         try {
-            return teacherService.updateTeacher(teacher);
+            ResponseEntity<ResponseMessage> responseMessageResponseEntity = teacherService.updateTeacher(teacher);
+            return ResponseEntity.ok(responseMessageResponseEntity);
         } catch (Exception e) {
             return new ResponseEntity<>(new ResponseMessage("Error updating teacher: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -178,7 +158,8 @@ public class TeacherController {
     @GetMapping("/by-email")
     public ResponseEntity<?> getTeacherByEmail(@RequestParam String email) {
         try {
-            return teacherService.getTeacherByEmail(email);
+            ResponseEntity<ResponseTeacherDto> teacherByEmail = teacherService.getTeacherByEmail(email);
+            return ResponseEntity.ok(teacherByEmail);
         } catch (Exception e) {
             return new ResponseEntity<>(new ResponseMessage("Error retrieving teacher by email: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -213,9 +194,39 @@ public class TeacherController {
     @GetMapping("/by-phone")
     public ResponseEntity<?> getTeacherByPhoneNumber(@RequestParam String phoneNumber) {
         try {
-            return teacherService.getTeacherByPhoneNumber(phoneNumber);
+            ResponseEntity<ResponseTeacherDto> teacherByPhoneNumber = teacherService.getTeacherByPhoneNumber(phoneNumber);
+            return ResponseEntity.ok(teacherByPhoneNumber);
         } catch (Exception e) {
             return new ResponseEntity<>(new ResponseMessage("Error retrieving teacher by phone number: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Operation(
+            summary = "Get a teacher by ID",
+            description = "This endpoint retrieves a teacher by their ID.",
+            tags = {"Teacher"}
+    )
+    @ApiResponse(responseCode = "200",
+            description = "Teacher successfully retrieved",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Teacher.class)
+            )
+    )
+    @ApiResponse(responseCode = "404",
+            description = "Teacher not found",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ResponseMessage.class)
+            )
+    )
+    @GetMapping("/get-by-id/{id}")
+    public ResponseEntity<?> getTeacherById(@PathVariable Long id) {
+        try {
+            ResponseEntity<ResponseTeacherDto> teacherById = teacherService.getTeacherById(id);
+            return ResponseEntity.ok(teacherById);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseMessage("Error retrieving teacher by ID: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

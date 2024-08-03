@@ -65,6 +65,6 @@ public class Teacher implements Serializable {
     @Schema(required = true, description = "Teacher's address")
     private String address;
 
-    @OneToMany(mappedBy = "teacher")
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Student> students;
 }
