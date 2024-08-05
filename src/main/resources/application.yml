@@ -22,3 +22,13 @@ spring:
 upload:
   server:
     folder: D:\FileUploads\
+api:
+  jsonplaceholder: https://jsonplaceholder.typicode.com
+
+logging:
+  level:
+    org.springframework.web.client.RestTemplate: DEBUG
+    org.apache.http: DEBUG
+
+
+
