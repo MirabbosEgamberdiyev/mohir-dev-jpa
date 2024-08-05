@@ -5,6 +5,8 @@ import fido.uz.mohir_dev_jpa.enums.FileStorageStatus;
 import fido.uz.mohir_dev_jpa.repository.FileStorageRepository;
 import org.hashids.Hashids;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -76,6 +78,44 @@ public class FileStorageService {
             }
         }
         return null;
+    }
+
+
+
+    public Resource preview(String hashId) {
+        FileStorage fileStorage = fileStorageRepository.findByHashId(hashId);
+        if (fileStorage == null) {
+            throw new RuntimeException("File not found with hashId: " + hashId);
+        }
+
+        Path filePath = Paths.get(fileStorage.getUploadFolder());
+        return new FileSystemResource(filePath.toFile());
+    }
+
+    public void deleteFile(String hashId) {
+        FileStorage fileStorage = fileStorageRepository.findByHashId(hashId);
+        if (fileStorage == null) {
+            throw new RuntimeException("File not found with hashId: " + hashId);
+        }
+
+        Path filePath = Paths.get(fileStorage.getUploadFolder());
+        try {
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not delete file: " + filePath, e);
+        }
+
+        fileStorageRepository.delete(fileStorage);
+    }
+
+    public Resource downloadFile(String hashId) {
+        FileStorage fileStorage = fileStorageRepository.findByHashId(hashId);
+        if (fileStorage == null) {
+            throw new RuntimeException("File not found with hashId: " + hashId);
+        }
+
+        Path filePath = Paths.get(fileStorage.getUploadFolder());
+        return new FileSystemResource(filePath.toFile());
     }
 
 }
