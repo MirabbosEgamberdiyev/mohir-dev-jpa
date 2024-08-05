@@ -81,6 +81,9 @@ public class PostController {
     public ResponseEntity<?> getById(@PathVariable Long id) {
         try {
             Post post = postService.findById(id);
+            if (post == null) {
+                return new ResponseEntity<>(new ResponseMessage("Post not found", 404), HttpStatus.NOT_FOUND);
+            }
             return ResponseEntity.ok(post);
         } catch (ResourceAccessException e) {
             return new ResponseEntity<>(new ResponseMessage("Timeout error retrieving post: " + e.getMessage(), 504), HttpStatus.GATEWAY_TIMEOUT);
