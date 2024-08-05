@@ -57,7 +57,7 @@ public class TeacherController {
             description = "Teachers successfully retrieved",
             content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = Teacher.class)
+                    schema = @Schema(implementation = ResponseTeacherDto.class)
             )
     )
     @GetMapping("/get-all")
@@ -138,7 +138,7 @@ public class TeacherController {
             description = "Teacher successfully retrieved",
             content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = Teacher.class)
+                    schema = @Schema(implementation = ResponseTeacherDto.class)
             )
     )
     @ApiResponse(responseCode = "404",
@@ -174,7 +174,7 @@ public class TeacherController {
             description = "Teacher successfully retrieved",
             content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = Teacher.class)
+                    schema = @Schema(implementation = ResponseTeacherDto.class)
             )
     )
     @ApiResponse(responseCode = "404",
@@ -210,7 +210,7 @@ public class TeacherController {
             description = "Teacher successfully retrieved",
             content = @Content(
                     mediaType = "application/json",
-                    schema = @Schema(implementation = Teacher.class)
+                    schema = @Schema(implementation = ResponseTeacherDto.class)
             )
     )
     @ApiResponse(responseCode = "404",
