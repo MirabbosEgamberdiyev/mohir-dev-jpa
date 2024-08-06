@@ -22,6 +22,7 @@ spring:
 upload:
   server:
     folder: D:\FileUploads\
+
 api:
   jsonplaceholder: https://jsonplaceholder.typicode.com
 
@@ -30,5 +31,9 @@ logging:
     org.springframework.web.client.RestTemplate: DEBUG
     org.apache.http: DEBUG
 
-
-
+http:
+  proxy:
+    ip: inet.fido.uz
+    port: 3128
+  use:
+    proxy: true

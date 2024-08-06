@@ -1,12 +1,10 @@
 package fido.uz.mohir_dev_jpa.service;
 
+import fido.uz.mohir_dev_jpa.entity.PostData;
 import fido.uz.mohir_dev_jpa.model.Post;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -65,8 +63,12 @@ public class PostService {
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
         try {
-            return restTemplate.exchange(api + "/posts/" + id, HttpMethod.GET, entity, Post.class)
-                    .getBody();
+            ResponseEntity<Post> response = restTemplate.exchange(api + "/posts/" + id, HttpMethod.GET, entity, Post.class);
+            Post body = response.getBody();
+
+            Optional.ofNullable(body).ifPresent(postDataService::save);
+            return Optional.ofNullable(body).orElse(null);
+
         } catch (ResourceAccessException e) {
             throw new RuntimeException("Timeout error retrieving post: " + e.getMessage(), e);
         } catch (Exception e) {

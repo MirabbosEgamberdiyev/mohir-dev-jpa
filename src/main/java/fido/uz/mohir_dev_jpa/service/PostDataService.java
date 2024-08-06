@@ -17,9 +17,7 @@ public class PostDataService {
         this.postDataRepository = postDataRepository;
     }
 
-    public PostData save(PostData postData) {
-        return postDataRepository.save(postData);
-    }
+
 
     public List<PostData> saveAll(List<Post> posts) {
         if (posts == null) {
@@ -38,5 +36,15 @@ public class PostDataService {
                 .collect(Collectors.toList());
 
         return postDataRepository.saveAll(postDataList);
+    }
+
+    public PostData save(Post post) {
+        PostData postData = new PostData();
+        postData.setPostId(post.getId());
+        postData.setUserId(post.getUserId());
+        postData.setTitle(post.getTitle());
+        postData.setBody(post.getBody());
+        PostData result = postDataRepository.save(postData);
+        return result;
     }
 }

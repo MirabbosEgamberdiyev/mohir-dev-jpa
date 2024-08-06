@@ -1,26 +1,48 @@
 package fido.uz.mohir_dev_jpa;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.time.Duration;
 
 @SpringBootApplication
 public class MohirDevJpaApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(MohirDevJpaApplication.class, args);
-	}
+    @Value("${http.proxy.ip}")
+    private String PROXY_SERVER_HOST;
 
-	@Bean
-	public RestTemplate restTemplate(RestTemplateBuilder builder) {
-		return builder
-				.setConnectTimeout(Duration.ofSeconds(60000)) // connection timeout
-				.setReadTimeout(Duration.ofSeconds(60000))    // read timeout
-				.build();
-	}
+    @Value("${http.proxy.port}")
+    private Integer PROXY_SERVER_PORT;
 
+    @Value("${http.use.proxy}")
+    private Boolean useProxy;
+
+    public static void main(String[] args) {
+        SpringApplication.run(MohirDevJpaApplication.class, args);
+    }
+
+    @Bean
+    public RestTemplate restTemplate(RestTemplateBuilder builder) {
+        SimpleClientHttpRequestFactory requestFactory = new SimpleClientHttpRequestFactory();
+        if (useProxy) {
+            Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(PROXY_SERVER_HOST, PROXY_SERVER_PORT));
+            requestFactory.setProxy(proxy);
+        }
+
+        RestTemplate restTemplate = builder
+                .setConnectTimeout(Duration.ofSeconds(60))
+                .setReadTimeout(Duration.ofSeconds(60))
+                .build();
+
+        restTemplate.setRequestFactory(requestFactory);
+
+        return restTemplate;
+    }
 }
