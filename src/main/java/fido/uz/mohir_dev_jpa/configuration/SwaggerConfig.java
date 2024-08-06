@@ -29,20 +29,17 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .components(new Components()
-                        .addSecuritySchemes("bearer-jwt", new SecurityScheme()
-                                .type(SecurityScheme.Type.HTTP)
-                                .scheme("bearer")
-                                .bearerFormat("JWT")
-                                .in(SecurityScheme.In.HEADER)
-                                .name("Authorization"))
+                        .addSecuritySchemes("bearer-jwt", new io.swagger.v3.oas.models.security.SecurityScheme().type(io.swagger.v3.oas.models.security.SecurityScheme.Type.APIKEY)
+                                .in(SecurityScheme.In.HEADER).name("Authorization"))
                 )
-                .info(new Info().title("Mohir-Dev-Spring-Boot-Jpa")
-                        .description("This is a sample Spring Boot RESTful service using springdoc-openapi and OpenAPI 3.")
-                        .version("v1.0.0"))
+                .info(new Info().title("Mohir-Dev-Spring-Boot- Jpa").description(
+                        "This is a sample Spring Boot RESTful service using springdoc-openapi and OpenAPI 3.").version("v1.0.0"))
+                .openapi("3.0.2")
+
                 .addSecurityItem(new SecurityRequirement().addList("bearer-jwt"));
     }
     @Bean
-    public SpringDocConfigProperties springDocConfigProperties() {
+    SpringDocConfigProperties springDocConfigProperties() {
         return new SpringDocConfigProperties();
     }
 
@@ -57,9 +54,7 @@ public class SwaggerConfig {
             );
             MediaType mediaType = new MediaType().schema(schema);
             Content content = new Content().addMediaType(APPLICATION_JSON_VALUE, mediaType);
-
             openApi.getPaths().values().forEach(pathItem -> pathItem.readOperations().forEach(operation -> {
-
                 if (operation.getParameters() != null) {
                     operation.getParameters().add(createAcceptLanguageParam());
                 } else {
@@ -81,15 +76,14 @@ public class SwaggerConfig {
             }));
         };
     }
-
     private static Parameter createAcceptLanguageParam() {
+
         List<String> acceptLanguages = new ArrayList<>(Arrays.asList(
                 AcceptLanguage.RU.toString(),
                 AcceptLanguage.UZL.toString(),
                 AcceptLanguage.UZC.toString(),
                 AcceptLanguage.EN.toString()
         ));
-
         Parameter acceptLanguageParam = new Parameter();
         acceptLanguageParam.setName("Accept-Language");
         acceptLanguageParam.setIn("header");
