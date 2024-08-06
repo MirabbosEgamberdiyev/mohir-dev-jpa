@@ -37,3 +37,5 @@ http:
     port: 3128
   use:
     proxy: true
+swagger:
+  ui-url: http://localhost:9098/swagger-ui/index.html
