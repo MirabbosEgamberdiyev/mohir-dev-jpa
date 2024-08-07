@@ -29,8 +29,12 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .components(new Components()
-                        .addSecuritySchemes("bearer-jwt", new io.swagger.v3.oas.models.security.SecurityScheme().type(io.swagger.v3.oas.models.security.SecurityScheme.Type.APIKEY)
-                                .in(SecurityScheme.In.HEADER).name("Authorization"))
+                        .addSecuritySchemes("bearer-jwt", new SecurityScheme()
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")
+                                .in(SecurityScheme.In.HEADER)
+                                .name("Authorization"))
                 )
                 .info(new Info().title("Mohir-Dev-Spring-Boot- Jpa").description(
                         "This is a sample Spring Boot RESTful service using springdoc-openapi and OpenAPI 3.").version("v1.0.0"))
