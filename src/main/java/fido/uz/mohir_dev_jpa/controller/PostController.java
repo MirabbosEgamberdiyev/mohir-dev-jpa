@@ -1,18 +1,18 @@
 package fido.uz.mohir_dev_jpa.controller;
 
+import fido.uz.mohir_dev_jpa.dto.PostDto;
 import fido.uz.mohir_dev_jpa.exception.ResponseMessage;
 import fido.uz.mohir_dev_jpa.model.Post;
 import fido.uz.mohir_dev_jpa.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
@@ -91,4 +91,40 @@ public class PostController {
             return new ResponseEntity<>(new ResponseMessage("Error retrieving post: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    @Operation(
+            summary = "Create a Post from jsonplaceholder",
+            description = "Create a Post from jsonplaceholder.",
+            tags = {"Post"}
+    )
+    @ApiResponse(responseCode = "200",
+            description = "Post created successfully",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Post.class)
+            )
+    )
+    @ApiResponse(responseCode = "400",
+            description = "Bad Request",
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ResponseMessage.class)
+            )
+    )
+    @PostMapping("/posts")
+    public ResponseEntity<?> create(@RequestBody PostDto post) {
+        System.out.println("Received PostDto: " + post);
+        try {
+            Post result = postService.save(post);
+            System.out.println("Saved Post: " + result);
+            return ResponseEntity.ok(result);
+        } catch (ResourceAccessException e) {
+            return new ResponseEntity<>(new ResponseMessage("Timeout error creating post: " + e.getMessage(), 504), HttpStatus.GATEWAY_TIMEOUT);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new ResponseMessage("Error creating post: " + e.getMessage(), 500), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }

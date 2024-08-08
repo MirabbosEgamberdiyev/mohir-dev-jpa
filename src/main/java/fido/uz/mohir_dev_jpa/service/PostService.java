@@ -1,6 +1,8 @@
 package fido.uz.mohir_dev_jpa.service;
 
+import fido.uz.mohir_dev_jpa.dto.PostDto;
 import fido.uz.mohir_dev_jpa.entity.PostData;
+import fido.uz.mohir_dev_jpa.exception.CustomException;
 import fido.uz.mohir_dev_jpa.model.Post;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -75,4 +77,42 @@ public class PostService {
             throw new RuntimeException("Error retrieving post: " + e.getMessage(), e);
         }
     }
+
+    public Post save(PostDto post) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        HttpEntity<PostDto> entity = new HttpEntity<>(post, headers);
+
+        try {
+            // Assuming `api` is correctly set to the base URL of the JSONPlaceholder API
+            Post result = restTemplate.postForObject(this.api + "/posts", entity, Post.class);
+
+            // If the API doesn't return these fields, manually set them from PostDto
+            if (result != null) {
+                result.setUserId(post.getUserId());
+                result.setTitle(post.getTitle());
+                result.setBody(post.getBody());
+            }
+            return result;
+        } catch (Exception e) {
+            try {
+                throw new CustomException("Failed to create post", e);
+            } catch (CustomException ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+    }
+    public List<Post> findAllByQueryParam(){
+        HttpEntity<List<Post>> entity = new HttpEntity<>(getHeader());
+        List<Post> result = restTemplate.exchange(this.api + "/posts", HttpMethod.GET, entity, List.class).getBody();
+        return  result;
+
+    }
+
+    private HttpHeaders getHeader(){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
+        return headers;
+    }
+
 }
