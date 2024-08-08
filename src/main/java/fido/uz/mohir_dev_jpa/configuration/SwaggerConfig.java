@@ -14,6 +14,8 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springdoc.core.SpringDocAnnotationsUtils;
 import org.springdoc.core.SpringDocConfigProperties;
 import org.springdoc.core.customizers.OpenApiCustomiser;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,6 +27,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Configuration
 public class SwaggerConfig {
+
+    @Value("${swagger.ui.open}")
+    private Boolean open;
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
@@ -47,6 +52,14 @@ public class SwaggerConfig {
         return new SpringDocConfigProperties();
     }
 
+    @Bean
+    public CommandLineRunner openSwaggerUI(SwaggerUIOpener swaggerUIOpener) {
+        return args -> {
+            if (open) {
+                swaggerUIOpener.openSwaggerUI();
+            }
+        };
+    }
     @Bean
     public OpenApiCustomiser customerGlobalHeaderOpenApiCustomiser() {
         return openApi -> {

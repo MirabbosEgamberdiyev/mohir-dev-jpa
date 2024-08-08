@@ -37,5 +37,8 @@ http:
     port: 3128
   use:
     proxy: true
+
+#true bo'lsa swagger automatik ochiladi false bo'lsa ochilmaydi
 swagger:
-  ui-url: http://localhost:9098/swagger-ui/index.html
+  ui:
+    open: true

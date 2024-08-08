@@ -1,5 +1,6 @@
 package fido.uz.mohir_dev_jpa.configuration;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -10,8 +11,15 @@ import java.net.URISyntaxException;
 @Component
 public class SwaggerUIOpener {
 
-    @Value("${swagger.ui-url}")
-    private String swaggerUiUrl;
+    @Value("${server.port}")
+    private String port;
+
+    private static String swaggerUiUrl;
+
+    @PostConstruct
+    public void init() {
+        swaggerUiUrl = "http://localhost:" + port + "/swagger-ui/index.html";
+    }
 
     public void openSwaggerUI() {
         if (swaggerUiUrl == null || swaggerUiUrl.isEmpty()) {
