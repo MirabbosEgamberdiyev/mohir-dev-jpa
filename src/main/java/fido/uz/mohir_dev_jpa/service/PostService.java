@@ -6,6 +6,8 @@ import fido.uz.mohir_dev_jpa.exception.CustomException;
 import fido.uz.mohir_dev_jpa.model.Post;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -113,6 +115,10 @@ public class PostService {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         return headers;
+    }
+
+    public Page<PostData> findAll(Pageable pageable){
+        return postDataService.findAll(pageable);
     }
 
 }
