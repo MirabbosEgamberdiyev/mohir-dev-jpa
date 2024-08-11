@@ -30,6 +30,11 @@ logging:
   level:
     org.springframework.web.client.RestTemplate: DEBUG
     org.apache.http: DEBUG
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
 
 http:
   proxy:
